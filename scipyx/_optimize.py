@@ -22,3 +22,15 @@ def minimize(fun: Callable, x0, *args, **kwargs):
     out = scipy.optimize.minimize(fwrap, x0, *args, **kwargs)
     out.x = out.x.reshape(x0.shape)
     return out
+
+
+def leastsq(fun: Callable, x0, *args, **kwargs):
+    x0 = np.asarray(x0)
+    x0_shape = x0.shape
+
+    def fwrap(x):
+        x = x.reshape(x0_shape)
+        return fun(x)
+
+    out = scipy.optimize.leastsq(fwrap, x0, *args, **kwargs)
+    return (out[0].reshape(x0.shape), *out[1:])
