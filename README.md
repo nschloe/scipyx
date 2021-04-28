@@ -22,13 +22,26 @@ to PR here.
 
 #### Krylov methods
 ```python
-sol, info = scipyx.cg(A, b, tol=1.0e-10)
-sol, info = scipyx.minres(A, b, tol=1.0e-10)
-sol, info = scipyx.gmres(A, b, tol=1.0e-10)
-sol, info = scipyx.bicg(A, b, tol=1.0e-10)
-sol, info = scipyx.bicgstab(A, b, tol=1.0e-10)
-sol, info = scipyx.cgs(A, b, tol=1.0e-10)
-sol, info = scipyx.qmr(A, b, tol=1.0e-10)
+import numpy as np
+import scipy.sparse
+import scipyx as spx
+
+# create tridiagonal (-1, 2, -1) matrix
+n = 100
+data = -np.ones((3, n))
+data[1] = 2.0
+A = scipy.sparse.spdiags(data, [-1, 0, 1], n, n)
+A = A.tocsr()
+b = np.ones(n)
+
+
+sol, info = spx.cg(A, b, tol=1.0e-10)
+sol, info = spx.minres(A, b, tol=1.0e-10)
+sol, info = spx.gmres(A, b, tol=1.0e-10)
+sol, info = spx.bicg(A, b, tol=1.0e-10)
+sol, info = spx.bicgstab(A, b, tol=1.0e-10)
+sol, info = spx.cgs(A, b, tol=1.0e-10)
+sol, info = spx.qmr(A, b, tol=1.0e-10)
 ```
 `sol` is the solution of the linear system `A @ x = b` (or `None` if no convergence),
 and `info` contains some useful data, e.g., `info.resnorms`. The methods are wrappers
@@ -41,17 +54,41 @@ Relevant issues:
 
 #### Minimization
 ```python
+import scipyx as spx
+
+
 def f(x):
     return (x ** 2 - 2) ** 2
 
 
 x0 = 1.5
-out = scipyx.minimize(f, x0)
+out = spx.minimize(f, x0)
 ```
 In SciPy, the result from a minimization `out.x` will _always_ have shape `(n,)`, no
 matter the input vector. scipyx changes this to respect the input vector shape.
 
-[Corresponding issue report](https://github.com/scipy/scipy/issues/13869)
+Relevant issues:
+
+ * [optimization: let out.x have the same shape as
+   x0](https://github.com/scipy/scipy/issues/13869)
+
+
+#### Root-finding
+```python
+import scipyx as spx
+
+
+def f(x):
+    return x ** 2 - 2
+
+a, b = spx.bisect(f, 0.0, 5.0, tol=1.0e-12)
+a, b = spx.regula_falsi(f, 0.0, 5.0, tol=1.0e-12)
+```
+scipyx provides some basic nonlinear root-findings algorithms:
+[bisection](https://en.wikipedia.org/wiki/Bisection_method) and [regula
+falsi](https://en.wikipedia.org/wiki/Regula_falsi). They're not as fast-converging as
+[other methods](https://en.wikipedia.org/wiki/Newton%27s_method), but are very robust
+and work with almost any function.
 
 
 ### License

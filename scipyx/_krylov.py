@@ -75,10 +75,6 @@ def cgs(*args, **kwargs):
     return _wrapper(scipy.sparse.linalg.cgs, *args, **kwargs)
 
 
-def qmr(*args, **kwargs):
-    return _wrapper(scipy.sparse.linalg.qmr, *args, **kwargs)
-
-
 def gmres(
     A,
     b,
@@ -184,6 +180,61 @@ def minres(
 
     x, info = scipy.sparse.linalg.minres(
         A, b, x0=x0, shift=shift, tol=tol, maxiter=maxiter, M=M, callback=cb
+    )
+
+    success = info == 0
+
+    return x if success else None, Info(success, x, num_steps, resnorms, errnorms)
+
+
+# treat qmr separately because it can deal with two preconditioners, M1 and M2 (left and
+# right)
+def qmr(
+    A,
+    b,
+    x0=None,
+    tol: float = 1e-05,
+    maxiter: Optional[int] = None,
+    M1=None,
+    M2=None,
+    callback: Optional[Callable] = None,
+    atol: Optional[float] = 0.0,
+    exact_solution=None,
+):
+    if x0 is None:
+        x0 = np.zeros(A.shape[1])
+
+    # initial residual
+    resnorms = []
+    r = b - A @ x0
+    Mr = r if M1 is None else M1 @ r
+    resnorms.append(np.sqrt(np.dot(r, Mr)))
+
+    if exact_solution is None:
+        errnorms = None
+    else:
+        err = exact_solution - x0
+        errnorms = [np.sqrt(np.dot(err, err))]
+
+    num_steps = 0
+
+    def cb(xk):
+        nonlocal num_steps
+        num_steps += 1
+
+        if callback is not None:
+            callback(xk)
+
+        r = b - A @ xk
+        Mr = r if M1 is None else M1 @ r
+        resnorms.append(np.sqrt(np.dot(r, Mr)))
+
+        if exact_solution is not None:
+            err = exact_solution - x0
+            errnorms.append(np.sqrt(np.dot(err, err)))
+
+    x, info = scipy.sparse.linalg.qmr(
+        A, b, x0=x0, tol=tol, maxiter=maxiter, M1=M1, M2=M2, atol=atol, callback=cb
     )
 
     success = info == 0
