@@ -33,4 +33,4 @@ def leastsq(fun: Callable, x0, *args, **kwargs):
         return fun(x)
 
     out = scipy.optimize.leastsq(fwrap, x0, *args, **kwargs)
-    return out[0].reshape(x0.shape), *out[1:]
+    return (out[0].reshape(x0.shape), *out[1:])
