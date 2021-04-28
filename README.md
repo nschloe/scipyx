@@ -92,4 +92,5 @@ and work with almost any function.
 
 
 ### License
-scipyx is published under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+This software is published under the [BSD-3-Clause
+license](https://spdx.org/licenses/BSD-3-Clause.html).
