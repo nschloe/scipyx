@@ -38,9 +38,19 @@ def test_error():
 def test_0d_leastsq():
     def f(x):
         assert x.shape == ()
-        print(x.shape)
         return x
 
     x0 = 0.0
     x, _ = spx.leastsq(f, x0)
     assert x.shape == ()
+
+
+def test_1d_leastsq():
+    def f(x):
+        assert x.shape == (2,)
+        print(x.shape)
+        return x
+
+    x0 = [1.0, 0.0]
+    x, _ = spx.leastsq(f, x0)
+    assert x.shape == (2,)

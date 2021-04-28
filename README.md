@@ -52,7 +52,7 @@ Relevant issues:
  * [inconsistent number of callback calls between cg, minres](https://github.com/scipy/scipy/issues/13936)
 
 
-#### Minimization
+#### Optimization
 ```python
 import scipyx as spx
 
@@ -63,9 +63,15 @@ def f(x):
 
 x0 = 1.5
 out = spx.minimize(f, x0)
+print(out.x)
+
+x0 = -3.2
+x, _ = spx.leastsq(f, x0)
+print(x)
 ```
-In SciPy, the result from a minimization `out.x` will _always_ have shape `(n,)`, no
-matter the input vector. scipyx changes this to respect the input vector shape.
+In scipyx, all intermediate values `x` and the result from a minimization `out.x` will
+have the same shape as `x0`. (In SciPy, they always have shape `(n,)`, no matter the
+input vector.)
 
 Relevant issues:
 
