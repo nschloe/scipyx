@@ -81,6 +81,7 @@ import scipyx as spx
 def f(x):
     return x ** 2 - 2
 
+
 a, b = spx.bisect(f, 0.0, 5.0, tol=1.0e-12)
 a, b = spx.regula_falsi(f, 0.0, 5.0, tol=1.0e-12)
 ```

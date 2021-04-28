@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import scipyx
+import scipyx as spx
 
 
 def test_0d():
@@ -9,7 +9,7 @@ def test_0d():
         return (x ** 2 - 2) ** 2
 
     x0 = 1.5
-    out = scipyx.minimize(f, x0)
+    out = spx.minimize(f, x0)
 
     assert out.x.shape == np.asarray(x0).shape
     assert np.asarray(out.fun).shape == ()
@@ -20,7 +20,7 @@ def test_2d():
         return (np.sum(x ** 2) - 2) ** 2
 
     x0 = np.ones((4, 3), dtype=float)
-    out = scipyx.minimize(f, x0, method="Powell")
+    out = spx.minimize(f, x0, method="Powell")
 
     assert out.x.shape == np.asarray(x0).shape
     assert np.asarray(out.fun).shape == ()
@@ -32,4 +32,15 @@ def test_error():
 
     x0 = [1.5]
     with pytest.raises(ValueError):
-        scipyx.minimize(f, x0)
+        spx.minimize(f, x0)
+
+
+def test_0d_leastsq():
+    def f(x):
+        assert x.shape == ()
+        print(x.shape)
+        return x
+
+    x0 = 0.0
+    x, _ = spx.leastsq(f, x0)
+    assert x.shape == ()
