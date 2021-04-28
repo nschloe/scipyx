@@ -70,5 +70,23 @@ matter the input vector. scipyx changes this to respect the input vector shape.
 [Corresponding issue report](https://github.com/scipy/scipy/issues/13869)
 
 
+#### Root-finding
+```python
+import scipyx as spx
+
+
+def f(x):
+    return x ** 2 - 2
+
+a, b = spx.bisect(f, 0.0, 5.0, tol=1.0e-12)
+a, b = spx.regula_falsi(f, 0.0, 5.0, tol=1.0e-12)
+```
+scipyx provides some basic nonlinear root-findings algorithms:
+[bisection](https://en.wikipedia.org/wiki/Bisection_method) and [regula
+falsi](https://en.wikipedia.org/wiki/Regula_falsi). They're not as fast-converging as
+[other methods](https://en.wikipedia.org/wiki/Newton%27s_method), but are very robust
+and work with almost any function.
+
+
 ### License
 scipyx is published under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
