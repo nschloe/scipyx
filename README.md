@@ -54,12 +54,15 @@ Relevant issues:
 
 #### Minimization
 ```python
+import scipyx as spx
+
+
 def f(x):
     return (x ** 2 - 2) ** 2
 
 
 x0 = 1.5
-out = scipyx.minimize(f, x0)
+out = spx.minimize(f, x0)
 ```
 In SciPy, the result from a minimization `out.x` will _always_ have shape `(n,)`, no
 matter the input vector. scipyx changes this to respect the input vector shape.
