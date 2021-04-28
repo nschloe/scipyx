@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.sparse.linalg
 
-import npx
+import scipyx
 
 
 def _run(method, resnorms1, resnorms2, tol=1.0e-13):
@@ -44,7 +44,7 @@ def _run(method, resnorms1, resnorms2, tol=1.0e-13):
 
 def test_cg():
     _run(
-        npx.cg,
+        scipyx.cg,
         [
             3.1622776601683795,
             6.324555320336759,
@@ -66,7 +66,7 @@ def test_cg():
 
 def test_gmres():
     _run(
-        npx.gmres,
+        scipyx.gmres,
         [3.162277660168380e00, 7.160723346098895e-15],
         [2.236067977499790e00, 5.063396036227354e-15],
     )
@@ -74,7 +74,7 @@ def test_gmres():
 
 def test_minres():
     _run(
-        npx.minres,
+        scipyx.minres,
         [
             3.1622776601683795,
             2.8284271247461903,
@@ -96,7 +96,7 @@ def test_minres():
 
 def test_bicg():
     _run(
-        npx.bicg,
+        scipyx.bicg,
         [
             3.1622776601683795,
             6.324555320336759,
@@ -118,7 +118,7 @@ def test_bicg():
 
 def test_bicgstab():
     _run(
-        npx.bicgstab,
+        scipyx.bicgstab,
         [
             3.1622776601683795,
             2.87802343074627,
@@ -140,7 +140,7 @@ def test_bicgstab():
 
 def test_cgs():
     _run(
-        npx.cgs,
+        scipyx.cgs,
         [
             3.1622776601683795,
             67.23094525588644,
@@ -162,7 +162,7 @@ def test_cgs():
 
 def test_qmr():
     _run(
-        npx.cgs,
+        scipyx.cgs,
         [
             3.1622776601683795,
             67.23094525588644,

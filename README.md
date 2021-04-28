@@ -10,68 +10,17 @@
 [![LGTM](https://img.shields.io/lgtm/grade/python/github/nschloe/scipyx.svg?style=flat-square)](https://lgtm.com/projects/g/nschloe/scipyx)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
 
-[NumPy](https://numpy.org/) and [SciPy](https://www.scipy.org/) are large libraries used
-everywhere in scientific computing. That's why breaking backwards-compatibility comes as
-a significant cost and is almost always avoided, even if the API of some methods is
-arguably lacking. This package provides drop-in wrappers "fixing" those.
+[SciPy](https://www.scipy.org/) is large library used everywhere in scientific
+computing. That's why breaking backwards-compatibility comes as a significant cost and
+is almost always avoided, even if the API of some methods is arguably lacking. This
+package provides drop-in wrappers "fixing" those.
 
-If you have a fix for a NumPy method that can't go upstream for some reason, feel free
+[npx](https://github.com/nschloe/npx) does the same for [NumPy](https://numpy.org/).
+
+If you have a fix for a SciPy method that can't go upstream for some reason, feel free
 to PR here.
 
-
-#### `dot`
-```python
-scipyx.dot(a, b)
-```
-Forms the dot product between the last axis of `a` and the _first_ axis of `b`.
-
-(Not the second-last axis of `b` as `numpy.dot(a, b)`.)
-
-
-#### `np.solve`
-```python
-scipyx.solve(A, b)
-```
-Solves a linear equation system with a matrix of shape `(n, n)` and an array of shape
-`(n, ...)`. The output has the same shape as the second argument.
-
-
-#### `sum_at`/`add_at`
-```python
-scipyx.sum_at(a, idx, minlength=0)
-scipyx.add_at(out, idx, a)
-```
-Returns an array with entries of `a` summed up at indices `idx` with a minumum length of
-`minlength`. `idx` can have any shape as long as it's matching `a`. The output shape is
-`(minlength,...)`.
-
-The numpy equivalent `numpy.add.at` is _much_
-slower:
-
-<img alt="memory usage" src="https://nschloe.github.io/scipyx/perf-add-at.svg" width="50%">
-
-[Corresponding issue report](https://github.com/numpy/numpy/issues/11156)
-
-
-#### `unique_rows`
-```python
-scipyx.unique_rows(a, return_inverse=False, return_counts=False)
-```
-Returns the unique rows of the integer array `a`. The numpy alternative `np.unique(a,
-axis=0)` is slow.
-
-[Corresponding issue report](https://github.com/numpy/numpy/issues/11136)
-
-
-#### `isin_rows`
-```python
-scipyx.isin_rows(a, b)
-```
-Returns a boolean array of length `len(a)` specifying if the rows `a[k]` appear in `b`.
-Similar to NumPy's own `np.isin` which only works for scalars.
-
-
-#### SciPy Krylov methods
+#### Krylov methods
 ```python
 sol, info = scipyx.cg(A, b, tol=1.0e-10)
 sol, info = scipyx.minres(A, b, tol=1.0e-10)
@@ -90,7 +39,7 @@ Relevant issues:
  * [inconsistent number of callback calls between cg, minres](https://github.com/scipy/scipy/issues/13936)
 
 
-#### SciPy minimization
+#### Minimization
 ```python
 def f(x):
     return (x ** 2 - 2) ** 2
