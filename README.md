@@ -67,7 +67,10 @@ out = spx.minimize(f, x0)
 In SciPy, the result from a minimization `out.x` will _always_ have shape `(n,)`, no
 matter the input vector. scipyx changes this to respect the input vector shape.
 
-[Corresponding issue report](https://github.com/scipy/scipy/issues/13869)
+Relevant issues:
+
+ * [optimization: let out.x have the same shape as
+   x0](https://github.com/scipy/scipy/issues/13869)
 
 
 #### Root-finding
