@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional
 
 import numpy as np
 
@@ -12,7 +12,7 @@ def _dot_last(a, b):
     return out
 
 
-def bisect(f: Callable, a, b, tol: float, max_num_steps=np.infty):
+def bisect(f: Callable, a, b, tol: float, max_num_steps: Optional[int] = None):
     a = np.asarray(a)
     b = np.asarray(b)
 
@@ -38,7 +38,7 @@ def bisect(f: Callable, a, b, tol: float, max_num_steps=np.infty):
         if np.all(dist2 < tol ** 2):
             break
 
-        if k >= max_num_steps:
+        if max_num_steps is not None and k >= max_num_steps:
             break
 
         c = (a + b) / 2
@@ -53,7 +53,7 @@ def bisect(f: Callable, a, b, tol: float, max_num_steps=np.infty):
     return a, b
 
 
-def regula_falsi(f: Callable, a, b, tol: float, max_num_steps=np.infty):
+def regula_falsi(f: Callable, a, b, tol: float, max_num_steps: Optional[int] = None):
     a = np.asarray(a)
     b = np.asarray(b)
     fa = np.asarray(f(a))
@@ -70,7 +70,7 @@ def regula_falsi(f: Callable, a, b, tol: float, max_num_steps=np.infty):
 
     k = 0
     while True:
-        if k >= max_num_steps:
+        if max_num_steps is not None and k >= max_num_steps:
             break
 
         c = (a * fb - b * fa) / (fb - fa)
