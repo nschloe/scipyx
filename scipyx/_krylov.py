@@ -75,10 +75,6 @@ def cgs(*args, **kwargs):
     return _wrapper(scipy.sparse.linalg.cgs, *args, **kwargs)
 
 
-def qmr(*args, **kwargs):
-    return _wrapper(scipy.sparse.linalg.qmr, *args, **kwargs)
-
-
 def gmres(
     A,
     b,
