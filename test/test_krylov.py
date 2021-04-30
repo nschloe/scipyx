@@ -76,7 +76,10 @@ def _hpd():
 def test_run(method, system, tol=1.0e-13):
     A, b, M = system
 
-    exact_solution = scipy.sparse.linalg.spsolve(A, b)
+    if isinstance(A, np.ndarray):
+        exact_solution = np.linalg.solve(A, b)
+    else:
+        exact_solution = np.linalg.solve(A.toarray(), b)
 
     x0 = np.zeros(A.shape[1])
     if M is None:
