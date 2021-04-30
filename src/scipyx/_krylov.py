@@ -8,6 +8,14 @@ import scipy.sparse.linalg
 Info = namedtuple("KrylovInfo", ["success", "xk", "numsteps", "resnorms", "errnorms"])
 
 
+def _norm(r, M=None):
+    Mr = r if M is None else M @ r
+    rMr = np.dot(r.conj(), Mr)
+    if np.any(rMr.imag) > 1.0e-13:
+        raise RuntimeError("Got nonnegative imaginary part.")
+    return np.sqrt(rMr.real)
+
+
 def _wrapper(
     method,
     A,
@@ -26,14 +34,13 @@ def _wrapper(
     # initial residual
     resnorms = []
     r = b - A @ x0
-    Mr = r if M is None else M @ r
-    resnorms.append(np.sqrt(np.dot(r, Mr)))
+    resnorms.append(_norm(r, M))
 
     if exact_solution is None:
         errnorms = None
     else:
         err = exact_solution - x0
-        errnorms = [np.sqrt(np.dot(err, err))]
+        errnorms = [_norm(err)]
 
     num_steps = 0
 
@@ -45,12 +52,10 @@ def _wrapper(
             callback(xk)
 
         r = b - A @ xk
-        Mr = r if M is None else M @ r
-        resnorms.append(np.sqrt(np.dot(r, Mr)))
+        resnorms.append(_norm(r, M))
 
         if exact_solution is not None:
-            err = exact_solution - x0
-            errnorms.append(np.sqrt(np.dot(err, err)))
+            errnorms.append(_norm(exact_solution - x0))
 
     x, info = method(A, b, x0=x0, tol=tol, maxiter=maxiter, M=M, atol=atol, callback=cb)
 
@@ -108,12 +113,10 @@ def gmres(
             callback(xk)
 
         r = b - A @ xk
-        Mr = r if M is None else M @ r
-        resnorms.append(np.sqrt(np.dot(r, Mr)))
+        resnorms.append(_norm(r, M))
 
         if exact_solution is not None:
-            err = exact_solution - x0
-            errnorms.append(np.sqrt(np.dot(err, err)))
+            errnorms.append(_norm(exact_solution - x0))
 
     x, info = scipy.sparse.linalg.gmres(
         A,
@@ -152,14 +155,13 @@ def minres(
     # initial residual
     resnorms = []
     r = b - A @ x0
-    Mr = r if M is None else M @ r
-    resnorms.append(np.sqrt(np.dot(r, Mr)))
+    resnorms.append(_norm(r, M))
 
     if exact_solution is None:
         errnorms = None
     else:
         err = exact_solution - x0
-        errnorms = [np.sqrt(np.dot(err, err))]
+        errnorms = [_norm(err)]
 
     num_steps = 0
 
@@ -171,12 +173,10 @@ def minres(
             callback(xk)
 
         r = b - A @ xk
-        Mr = r if M is None else M @ r
-        resnorms.append(np.sqrt(np.dot(r, Mr)))
+        resnorms.append(_norm(r, M))
 
         if exact_solution is not None:
-            err = exact_solution - x0
-            errnorms.append(np.sqrt(np.dot(err, err)))
+            errnorms.append(_norm(exact_solution - x0))
 
     x, info = scipy.sparse.linalg.minres(
         A, b, x0=x0, shift=shift, tol=tol, maxiter=maxiter, M=M, callback=cb
@@ -207,14 +207,13 @@ def qmr(
     # initial residual
     resnorms = []
     r = b - A @ x0
-    Mr = r if M1 is None else M1 @ r
-    resnorms.append(np.sqrt(np.dot(r, Mr)))
+    resnorms.append(_norm(r, M1))
 
     if exact_solution is None:
         errnorms = None
     else:
         err = exact_solution - x0
-        errnorms = [np.sqrt(np.dot(err, err))]
+        errnorms = [_norm(err)]
 
     num_steps = 0
 
@@ -226,12 +225,10 @@ def qmr(
             callback(xk)
 
         r = b - A @ xk
-        Mr = r if M1 is None else M1 @ r
-        resnorms.append(np.sqrt(np.dot(r, Mr)))
+        resnorms.append(_norm(r, M1))
 
         if exact_solution is not None:
-            err = exact_solution - x0
-            errnorms.append(np.sqrt(np.dot(err, err)))
+            errnorms.append(_norm(exact_solution - x0))
 
     x, info = scipy.sparse.linalg.qmr(
         A, b, x0=x0, tol=tol, maxiter=maxiter, M1=M1, M2=M2, atol=atol, callback=cb
