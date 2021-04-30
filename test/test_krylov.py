@@ -5,18 +5,18 @@ import scipy.sparse.linalg
 import scipyx
 
 
-def _spd():
-    n = 10
+def _spd(shape_rhs):
+    n = shape_rhs[0]
     data = -np.ones((3, n))
     data[1] = 2.0
     A = scipy.sparse.spdiags(data, [-1, 0, 1], n, n)
     A = A.tocsr()
-    b = np.ones(n)
+    b = np.ones(shape_rhs)
     return A, b, None
 
 
 def _spd_prec():
-    n = 10
+    n = 5
     data = -np.ones((3, n))
     data[1] = 2.0
     A = scipy.sparse.spdiags(data, [-1, 0, 1], n, n)
@@ -44,31 +44,32 @@ def _hpd():
 @pytest.mark.parametrize(
     "method, system",
     [
-        (scipyx.cg, _spd()),
+        (scipyx.cg, _spd((5,))),
+        (scipyx.cg, _spd((5, 1))),
         (scipyx.cg, _spd_prec()),
         (scipyx.cg, _hpd()),
         #
-        (scipyx.gmres, _spd()),
+        (scipyx.gmres, _spd((5,))),
         (scipyx.gmres, _spd_prec()),
         (scipyx.gmres, _hpd()),
         #
-        (scipyx.minres, _spd()),
+        (scipyx.minres, _spd((5,))),
         (scipyx.minres, _spd_prec()),
         # (scipyx.minres, _hpd()),  ERR minres can't deal with hermitian?
         #
-        (scipyx.bicg, _spd()),
+        (scipyx.bicg, _spd((5,))),
         (scipyx.bicg, _spd_prec()),
         (scipyx.bicg, _hpd()),
         #
-        (scipyx.bicgstab, _spd()),
+        (scipyx.bicgstab, _spd((5,))),
         (scipyx.bicgstab, _spd_prec()),
         (scipyx.bicgstab, _hpd()),
         #
-        (scipyx.cgs, _spd()),
+        (scipyx.cgs, _spd((5,))),
         (scipyx.cgs, _spd_prec()),
         (scipyx.cgs, _hpd()),
         #
-        (scipyx.qmr, _spd()),
+        (scipyx.qmr, _spd((5,))),
         # (scipyx.qmr, _spd_prec()),
         (scipyx.qmr, _hpd()),
     ],
@@ -81,7 +82,7 @@ def test_run(method, system, tol=1.0e-13):
     else:
         exact_solution = np.linalg.solve(A.toarray(), b)
 
-    x0 = np.zeros(A.shape[1])
+    x0 = np.zeros_like(b)
     if M is None:
         sol, info = method(
             A, b, x0, exact_solution=exact_solution, callback=lambda _: None
@@ -95,11 +96,17 @@ def test_run(method, system, tol=1.0e-13):
     assert len(info.resnorms) == info.numsteps + 1
     assert len(info.errnorms) == info.numsteps + 1
 
+    assert np.all(np.abs(sol - info.xk) < tol * (1.0 + np.abs(sol)))
+    assert sol.shape == x0.shape
+
     print(info.resnorms)
     assert np.asarray(info.resnorms).dtype == float
     assert np.asarray(info.errnorms).dtype == float
 
     # make sure the initial resnorm and errnorm are correct
+    print("a")
+    print(method)
+    print(info.resnorms[0])
     if M is None:
         assert abs(np.linalg.norm(A @ x0 - b) - info.resnorms[0]) < tol
     else:

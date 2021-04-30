@@ -10,9 +10,18 @@ Info = namedtuple("KrylovInfo", ["success", "xk", "numsteps", "resnorms", "errno
 
 def _norm(r, M=None):
     Mr = r if M is None else M @ r
-    rMr = np.dot(r.conj(), Mr)
+
+    print(f"{r.shape = }")
+    if len(r.shape) == 1:
+        rMr = np.dot(r.conj(), Mr)
+    else:
+        rMr = np.einsum("i...,i...->...", r.conj(), Mr)
+
     if np.any(rMr.imag) > 1.0e-13:
-        raise RuntimeError("Got nonnegative imaginary part.")
+        raise RuntimeError(
+            "Got nonnegative imaginary part. "
+            "Is the preconditioner not self-adjoint?"
+        )
     return np.sqrt(rMr.real)
 
 
@@ -29,12 +38,20 @@ def _wrapper(
     exact_solution=None,
 ):
     if x0 is None:
-        x0 = np.zeros(A.shape[1])
+        x0 = np.zeros_like(b)
+
+    if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
+        raise ValueError(f"A must be a square matrix, not {A.shape = }.")
+    if x0.shape != b.shape:
+        raise ValueError(
+            "x0 and b need to have the same shapen, not "
+            f"{x0.shape = }, {b.shape = }"
+        )
+    assert A.shape[1] == b.shape[0]
 
     # initial residual
-    resnorms = []
     r = b - A @ x0
-    resnorms.append(_norm(r, M))
+    resnorms = [_norm(r, M)]
 
     if exact_solution is None:
         errnorms = None
