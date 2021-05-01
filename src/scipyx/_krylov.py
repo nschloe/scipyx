@@ -48,6 +48,8 @@ def _wrapper(
             "x0 and b need to have the same shapen, not "
             f"{x0.shape = }, {b.shape = }"
         )
+    if b.shape[0] != b.size:
+        raise ValueError("Can only deal with one right-hand side at a time.")
     assert A.shape[1] == b.shape[0]
 
     # initial residual

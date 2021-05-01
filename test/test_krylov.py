@@ -50,10 +50,12 @@ def _hpd():
         (scipyx.cg, _hpd()),
         #
         (scipyx.gmres, _spd((5,))),
+        # (scipyx.gmres, _spd((5, 1))),
         (scipyx.gmres, _spd_prec()),
         (scipyx.gmres, _hpd()),
         #
         (scipyx.minres, _spd((5,))),
+        # (scipyx.minres, _spd((5, 1))),
         (scipyx.minres, _spd_prec()),
         # (scipyx.minres, _hpd()),  ERR minres can't deal with hermitian?
         #
@@ -82,15 +84,15 @@ def test_run(method, system, tol=1.0e-13):
     else:
         exact_solution = np.linalg.solve(A.toarray(), b)
 
+
+    def cb(x):
+        assert x.shape == b.shape
+
     x0 = np.zeros_like(b)
     if M is None:
-        sol, info = method(
-            A, b, x0, exact_solution=exact_solution, callback=lambda _: None
-        )
+        sol, info = method(A, b, x0, exact_solution=exact_solution, callback=cb)
     else:
-        sol, info = method(
-            A, b, x0, exact_solution=exact_solution, M=M, callback=lambda _: None
-        )
+        sol, info = method(A, b, x0, exact_solution=exact_solution, M=M, callback=cb)
     assert sol is not None
     assert info.success
     assert len(info.resnorms) == info.numsteps + 1
