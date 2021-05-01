@@ -10,10 +10,30 @@ Info = namedtuple("KrylovInfo", ["success", "xk", "numsteps", "resnorms", "errno
 
 def _norm(r, M=None):
     Mr = r if M is None else M @ r
-    rMr = np.dot(r.conj(), Mr)
+
+    if len(r.shape) == 1:
+        rMr = np.dot(r.conj(), Mr)
+    else:
+        rMr = np.einsum("i...,i...->...", r.conj(), Mr)
+
     if np.any(rMr.imag) > 1.0e-13:
-        raise RuntimeError("Got nonnegative imaginary part.")
+        raise RuntimeError(
+            "Got nonnegative imaginary part. " "Is the preconditioner not self-adjoint?"
+        )
     return np.sqrt(rMr.real)
+
+
+def assert_shapes(A, b, x0):
+    if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
+        raise ValueError(f"A must be a square matrix, not A.shape = {A.shape}.")
+    if x0.shape != b.shape:
+        raise ValueError(
+            f"x0 and b need to have the same shape, not x0.shape = {x0.shape}, "
+            f"b.shape = {b.shape}"
+        )
+    if b.shape[0] != b.size:
+        raise ValueError("Can only deal with one right-hand side at a time.")
+    assert A.shape[1] == b.shape[0]
 
 
 def _wrapper(
@@ -29,12 +49,15 @@ def _wrapper(
     exact_solution=None,
 ):
     if x0 is None:
-        x0 = np.zeros(A.shape[1])
+        x0 = np.zeros_like(b)
+
+    assert_shapes(A, b, x0)
+
+    x0_shape = x0.shape
 
     # initial residual
-    resnorms = []
     r = b - A @ x0
-    resnorms.append(_norm(r, M))
+    resnorms = [_norm(r, M)]
 
     if exact_solution is None:
         errnorms = None
@@ -48,6 +71,8 @@ def _wrapper(
         nonlocal num_steps
         num_steps += 1
 
+        xk = xk.reshape(x0_shape)
+
         if callback is not None:
             callback(xk)
 
@@ -58,9 +83,8 @@ def _wrapper(
             errnorms.append(_norm(exact_solution - x0))
 
     x, info = method(A, b, x0=x0, tol=tol, maxiter=maxiter, M=M, atol=atol, callback=cb)
-
     success = info == 0
-
+    x = x.reshape(x0_shape)
     return x if success else None, Info(success, x, num_steps, resnorms, errnorms)
 
 
@@ -95,6 +119,10 @@ def gmres(
     if x0 is None:
         x0 = np.zeros(A.shape[1])
 
+    assert_shapes(A, b, x0)
+
+    x0_shape = x0.shape
+
     # scipy.gmres() apparently calls the callback before the start of the iteration such
     # that the initial residual is automatically contained
     resnorms = []
@@ -108,6 +136,8 @@ def gmres(
     def cb(xk):
         nonlocal num_steps
         num_steps += 1
+
+        xk = xk.reshape(x0_shape)
 
         if callback is not None:
             callback(xk)
@@ -130,9 +160,8 @@ def gmres(
         callback=cb,
         callback_type="x",
     )
-
     success = info == 0
-
+    x = x.reshape(x0_shape)
     return x if success else None, Info(success, x, num_steps, resnorms, errnorms)
 
 
@@ -152,6 +181,10 @@ def minres(
     if x0 is None:
         x0 = np.zeros(A.shape[1])
 
+    assert_shapes(A, b, x0)
+
+    x0_shape = x0.shape
+
     # initial residual
     resnorms = []
     r = b - A @ x0
@@ -169,6 +202,8 @@ def minres(
         nonlocal num_steps
         num_steps += 1
 
+        xk = xk.reshape(x0_shape)
+
         if callback is not None:
             callback(xk)
 
@@ -181,9 +216,8 @@ def minres(
     x, info = scipy.sparse.linalg.minres(
         A, b, x0=x0, shift=shift, tol=tol, maxiter=maxiter, M=M, callback=cb
     )
-
     success = info == 0
-
+    x = x.reshape(x0_shape)
     return x if success else None, Info(success, x, num_steps, resnorms, errnorms)
 
 
@@ -204,6 +238,10 @@ def qmr(
     if x0 is None:
         x0 = np.zeros(A.shape[1])
 
+    x0_shape = x0.shape
+
+    assert_shapes(A, b, x0)
+
     # initial residual
     resnorms = []
     r = b - A @ x0
@@ -221,6 +259,8 @@ def qmr(
         nonlocal num_steps
         num_steps += 1
 
+        xk = xk.reshape(x0_shape)
+
         if callback is not None:
             callback(xk)
 
@@ -233,7 +273,6 @@ def qmr(
     x, info = scipy.sparse.linalg.qmr(
         A, b, x0=x0, tol=tol, maxiter=maxiter, M1=M1, M2=M2, atol=atol, callback=cb
     )
-
     success = info == 0
-
+    x = x.reshape(x0_shape)
     return x if success else None, Info(success, x, num_steps, resnorms, errnorms)
