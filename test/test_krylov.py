@@ -50,28 +50,32 @@ def _hpd():
         (scipyx.cg, _hpd()),
         #
         (scipyx.gmres, _spd((5,))),
-        # (scipyx.gmres, _spd((5, 1))),
+        (scipyx.gmres, _spd((5, 1))),
         (scipyx.gmres, _spd_prec()),
         (scipyx.gmres, _hpd()),
         #
         (scipyx.minres, _spd((5,))),
-        # (scipyx.minres, _spd((5, 1))),
+        (scipyx.minres, _spd((5, 1))),
         (scipyx.minres, _spd_prec()),
         # (scipyx.minres, _hpd()),  ERR minres can't deal with hermitian?
         #
         (scipyx.bicg, _spd((5,))),
+        (scipyx.bicg, _spd((5, 1))),
         (scipyx.bicg, _spd_prec()),
         (scipyx.bicg, _hpd()),
         #
         (scipyx.bicgstab, _spd((5,))),
+        (scipyx.bicgstab, _spd((5, 1))),
         (scipyx.bicgstab, _spd_prec()),
         (scipyx.bicgstab, _hpd()),
         #
         (scipyx.cgs, _spd((5,))),
+        (scipyx.cgs, _spd((5, 1))),
         (scipyx.cgs, _spd_prec()),
         (scipyx.cgs, _hpd()),
         #
         (scipyx.qmr, _spd((5,))),
+        (scipyx.qmr, _spd((5, 1))),
         # (scipyx.qmr, _spd_prec()),
         (scipyx.qmr, _hpd()),
     ],
@@ -83,7 +87,6 @@ def test_run(method, system, tol=1.0e-13):
         exact_solution = np.linalg.solve(A, b)
     else:
         exact_solution = np.linalg.solve(A.toarray(), b)
-
 
     def cb(x):
         assert x.shape == b.shape
