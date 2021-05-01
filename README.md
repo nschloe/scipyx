@@ -44,8 +44,9 @@ sol, info = spx.cgs(A, b, tol=1.0e-10)
 sol, info = spx.qmr(A, b, tol=1.0e-10)
 ```
 `sol` is the solution of the linear system `A @ x = b` (or `None` if no convergence),
-and `info` contains some useful data, e.g., `info.resnorms`. The methods are wrappers
-around [SciPy's iterative
+and `info` contains some useful data, e.g., `info.resnorms`. The solution `sol` and all
+callback `x` have the shape of `x0`/`b`.
+The methods are wrappers around [SciPy's iterative
 solvers](https://docs.scipy.org/doc/scipy/reference/sparse.linalg.html).
 
 Relevant issues:
