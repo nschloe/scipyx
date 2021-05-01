@@ -23,6 +23,19 @@ def _norm(r, M=None):
     return np.sqrt(rMr.real)
 
 
+def assert_shapes(A, b, x0):
+    if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
+        raise ValueError(f"A must be a square matrix, not A.shape = {A.shape}.")
+    if x0.shape != b.shape:
+        raise ValueError(
+            f"x0 and b need to have the same shape, not x0.shape = {x0.shape}, "
+            f"b.shape = {b.shape}"
+        )
+    if b.shape[0] != b.size:
+        raise ValueError("Can only deal with one right-hand side at a time.")
+    assert A.shape[1] == b.shape[0]
+
+
 def _wrapper(
     method,
     A,
@@ -38,17 +51,9 @@ def _wrapper(
     if x0 is None:
         x0 = np.zeros_like(b)
 
-    x0_shape = x0.shape
+    assert_shapes(A, b, x0)
 
-    if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
-        raise ValueError(f"A must be a square matrix, not {A.shape = }.")
-    if x0_shape != b.shape:
-        raise ValueError(
-            "x0 and b need to have the same shapen, not " f"{x0.shape = }, {b.shape = }"
-        )
-    if b.shape[0] != b.size:
-        raise ValueError("Can only deal with one right-hand side at a time.")
-    assert A.shape[1] == b.shape[0]
+    x0_shape = x0.shape
 
     # initial residual
     r = b - A @ x0
@@ -114,17 +119,9 @@ def gmres(
     if x0 is None:
         x0 = np.zeros(A.shape[1])
 
-    x0_shape = x0.shape
+    assert_shapes(A, b, x0)
 
-    if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
-        raise ValueError(f"A must be a square matrix, not {A.shape = }.")
-    if x0_shape != b.shape:
-        raise ValueError(
-            "x0 and b need to have the same shapen, not " f"{x0.shape = }, {b.shape = }"
-        )
-    if b.shape[0] != b.size:
-        raise ValueError("Can only deal with one right-hand side at a time.")
-    assert A.shape[1] == b.shape[0]
+    x0_shape = x0.shape
 
     # scipy.gmres() apparently calls the callback before the start of the iteration such
     # that the initial residual is automatically contained
@@ -184,17 +181,9 @@ def minres(
     if x0 is None:
         x0 = np.zeros(A.shape[1])
 
-    x0_shape = x0.shape
+    assert_shapes(A, b, x0)
 
-    if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
-        raise ValueError(f"A must be a square matrix, not {A.shape = }.")
-    if x0_shape != b.shape:
-        raise ValueError(
-            "x0 and b need to have the same shapen, not " f"{x0.shape = }, {b.shape = }"
-        )
-    if b.shape[0] != b.size:
-        raise ValueError("Can only deal with one right-hand side at a time.")
-    assert A.shape[1] == b.shape[0]
+    x0_shape = x0.shape
 
     # initial residual
     resnorms = []
@@ -251,15 +240,7 @@ def qmr(
 
     x0_shape = x0.shape
 
-    if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
-        raise ValueError(f"A must be a square matrix, not {A.shape = }.")
-    if x0_shape != b.shape:
-        raise ValueError(
-            "x0 and b need to have the same shapen, not " f"{x0.shape = }, {b.shape = }"
-        )
-    if b.shape[0] != b.size:
-        raise ValueError("Can only deal with one right-hand side at a time.")
-    assert A.shape[1] == b.shape[0]
+    assert_shapes(A, b, x0)
 
     # initial residual
     resnorms = []
