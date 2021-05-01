@@ -11,7 +11,6 @@ Info = namedtuple("KrylovInfo", ["success", "xk", "numsteps", "resnorms", "errno
 def _norm(r, M=None):
     Mr = r if M is None else M @ r
 
-    print(f"{r.shape = }")
     if len(r.shape) == 1:
         rMr = np.dot(r.conj(), Mr)
     else:
@@ -40,9 +39,11 @@ def _wrapper(
     if x0 is None:
         x0 = np.zeros_like(b)
 
+    x0_shape = x0.shape
+
     if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
         raise ValueError(f"A must be a square matrix, not {A.shape = }.")
-    if x0.shape != b.shape:
+    if x0_shape != b.shape:
         raise ValueError(
             "x0 and b need to have the same shapen, not "
             f"{x0.shape = }, {b.shape = }"
@@ -65,6 +66,8 @@ def _wrapper(
         nonlocal num_steps
         num_steps += 1
 
+        xk = xk.reshape(x0_shape)
+
         if callback is not None:
             callback(xk)
 
@@ -75,8 +78,9 @@ def _wrapper(
             errnorms.append(_norm(exact_solution - x0))
 
     x, info = method(A, b, x0=x0, tol=tol, maxiter=maxiter, M=M, atol=atol, callback=cb)
-
     success = info == 0
+
+    x = x.reshape(x0_shape)
 
     return x if success else None, Info(success, x, num_steps, resnorms, errnorms)
 
