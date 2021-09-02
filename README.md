@@ -101,7 +101,9 @@ and work with almost any function.
 
 #### Rolling Lagrange interpolation
 ```python
+import numpy as np
 import scipyx as spx
+
 
 x = np.linspace(0.0, 1.0, 11)
 y = np.sin(7.0 * x)

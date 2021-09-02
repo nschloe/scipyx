@@ -13,7 +13,7 @@ import scipyx as spx
         (3, 3.8905430128124),
     ],
 )
-def test_interpolate(order, ref=None):
+def test_interpolate(order, ref):
     x = np.linspace(0.0, 1.0, 11)
     y = np.sin(7.0 * x)
 
@@ -29,11 +29,11 @@ def test_interpolate(order, ref=None):
     return x, y, xtarget, ytarget
 
 
-if __name__ == "__main__":
-    x, y, xtarget, ytarget = test_interpolate(2)
-    import matplotlib.pyplot as plt
-
-    plt.plot(x, y, "o", label="data")
-    plt.plot(xtarget, ytarget, "+", label="interpolation")
-    plt.savefig("interp-2.svg", transparent=True, bbox_inches="tight")
-    plt.show()
+# if __name__ == "__main__":
+#     x, y, xtarget, ytarget = test_interpolate(2)
+#     import matplotlib.pyplot as plt
+#
+#     plt.plot(x, y, "o", label="data")
+#     plt.plot(xtarget, ytarget, "+", label="interpolation")
+#     plt.savefig("interp-2.svg", transparent=True, bbox_inches="tight")
+#     plt.show()
