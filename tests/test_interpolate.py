@@ -30,10 +30,10 @@ def test_interpolate(order, ref):
 
 
 # if __name__ == "__main__":
-#     x, y, xtarget, ytarget = test_interpolate(2)
+#     x, y, xtarget, ytarget = test_interpolate(1, 3.699432132107516)
 #     import matplotlib.pyplot as plt
 #
 #     plt.plot(x, y, "o", label="data")
 #     plt.plot(xtarget, ytarget, "+", label="interpolation")
-#     plt.savefig("interp-2.svg", transparent=True, bbox_inches="tight")
+#     plt.savefig("interp-1.svg", transparent=True, bbox_inches="tight")
 #     plt.show()
