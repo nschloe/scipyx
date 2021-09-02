@@ -21,6 +21,7 @@ If you have a fix for a SciPy method that can't go upstream for some reason, fee
 to PR here.
 
 #### Krylov methods
+
 ```python
 import numpy as np
 import scipy.sparse
@@ -43,6 +44,7 @@ sol, info = spx.bicgstab(A, b, tol=1.0e-10)
 sol, info = spx.cgs(A, b, tol=1.0e-10)
 sol, info = spx.qmr(A, b, tol=1.0e-10)
 ```
+
 `sol` is the solution of the linear system `A @ x = b` (or `None` if no convergence),
 and `info` contains some useful data, e.g., `info.resnorms`. The solution `sol` and all
 callback `x` have the shape of `x0`/`b`.
@@ -50,10 +52,11 @@ The methods are wrappers around [SciPy's iterative
 solvers](https://docs.scipy.org/doc/scipy/reference/sparse.linalg.html).
 
 Relevant issues:
- * [inconsistent number of callback calls between cg, minres](https://github.com/scipy/scipy/issues/13936)
 
+- [inconsistent number of callback calls between cg, minres](https://github.com/scipy/scipy/issues/13936)
 
 #### Optimization
+
 ```python
 import scipyx as spx
 
@@ -70,17 +73,18 @@ x0 = -3.2
 x, _ = spx.leastsq(f, x0)
 print(x)
 ```
+
 In scipyx, all intermediate values `x` and the result from a minimization `out.x` will
 have the same shape as `x0`. (In SciPy, they always have shape `(n,)`, no matter the
 input vector.)
 
 Relevant issues:
 
- * [optimization: let out.x have the same shape as
-   x0](https://github.com/scipy/scipy/issues/13869)
-
+- [optimization: let out.x have the same shape as
+  x0](https://github.com/scipy/scipy/issues/13869)
 
 #### Root-finding
+
 ```python
 import scipyx as spx
 
@@ -92,14 +96,15 @@ def f(x):
 a, b = spx.bisect(f, 0.0, 5.0, tol=1.0e-12)
 a, b = spx.regula_falsi(f, 0.0, 5.0, tol=1.0e-12)
 ```
+
 scipyx provides some basic nonlinear root-findings algorithms:
 [bisection](https://en.wikipedia.org/wiki/Bisection_method) and [regula
 falsi](https://en.wikipedia.org/wiki/Regula_falsi). They're not as fast-converging as
 [other methods](https://en.wikipedia.org/wiki/Newton%27s_method), but are very robust
 and work with almost any function.
 
-
 #### Rolling Lagrange interpolation
+
 ```python
 import numpy as np
 import scipyx as spx
@@ -115,11 +120,11 @@ Given an array of coordinates `x` and an array of values `y`, you can use scipyx
 compute a piecewise polynomial Lagrange approximation. The `order + 1` closest
 coordinates x/y are considered for each interval.
 
-<img src="https://nschloe.github.io/scipyx/interp-0.svg" width="100%"> | <img src="https://nschloe.github.io/scipyx/interp-1.svg" width="100%"> | <img src="https://nschloe.github.io/scipyx/interp-2.svg" width="100%">
-:-------------------:|:------------------:|:-------------:|
-Order 0              |  Order 1       |  Order 2  |
-
+| <img src="https://nschloe.github.io/scipyx/interp-0.svg" width="100%"> | <img src="https://nschloe.github.io/scipyx/interp-1.svg" width="100%"> | <img src="https://nschloe.github.io/scipyx/interp-2.svg" width="100%"> |
+| :--------------------------------------------------------------------: | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
+|                                Order 0                                 |                                Order 1                                 |                                Order 2                                 |
 
 ### License
+
 This software is published under the [BSD-3-Clause
 license](https://spdx.org/licenses/BSD-3-Clause.html).
