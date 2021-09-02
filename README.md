@@ -99,6 +99,25 @@ falsi](https://en.wikipedia.org/wiki/Regula_falsi). They're not as fast-convergi
 and work with almost any function.
 
 
+#### Rolling Lagrange interpolation
+```python
+import scipyx as spx
+
+x = np.linspace(0.0, 1.0, 11)
+y = np.sin(7.0 * x)
+
+poly = spx.interp_rolling_lagrange(x, y, order=3)
+```
+
+Given an array of coordinates `x` and an array of values `y`, you can use scipyx to
+compute a piecewise polynomial Lagrange approximation. The `order + 1` closest
+coordinates x/y are considered for each interval.
+
+<img src="https://nschloe.github.io/scipyx/interp-0.svg" width="100%"> | <img src="https://nschloe.github.io/scipyx/interp-1.svg" width="100%"> | <img src="https://nschloe.github.io/scipyx/interp-2.svg" width="100%">
+:-------------------:|:------------------:|:-------------:|
+Order 0              |  Order 1       |  Order 2  |
+
+
 ### License
 This software is published under the [BSD-3-Clause
 license](https://spdx.org/licenses/BSD-3-Clause.html).
