@@ -4,11 +4,12 @@ from typing import Callable, Optional
 import numpy as np
 import scipy
 import scipy.sparse.linalg
+from numpy.typing import ArrayLike
 
 Info = namedtuple("KrylovInfo", ["success", "xk", "numsteps", "resnorms", "errnorms"])
 
 
-def _norm(r, M=None):
+def _norm(r: ArrayLike, M=None):
     Mr = r if M is None else M @ r
 
     if len(r.shape) == 1:
@@ -23,7 +24,7 @@ def _norm(r, M=None):
     return np.sqrt(rMr.real)
 
 
-def assert_shapes(A, b, x0):
+def assert_shapes(A, b: np.ndarray, x0: np.ndarray):
     if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
         raise ValueError(f"A must be a square matrix, not A.shape = {A.shape}.")
     if x0.shape != b.shape:
@@ -37,19 +38,21 @@ def assert_shapes(A, b, x0):
 
 
 def _wrapper(
-    method,
+    method: Callable,
     A,
-    b,
-    x0=None,
+    b: ArrayLike,
+    x0: Optional[ArrayLike] = None,
     tol: float = 1e-05,
     maxiter: Optional[int] = None,
     M=None,
     callback: Optional[Callable] = None,
     atol: Optional[float] = 0.0,
-    exact_solution=None,
+    exact_solution: Optional[ArrayLike] = None,
 ):
     if x0 is None:
         x0 = np.zeros_like(b)
+    else:
+        x0 = np.asarray(x0)
 
     assert_shapes(A, b, x0)
 
@@ -106,18 +109,20 @@ def cgs(*args, **kwargs):
 
 def gmres(
     A,
-    b,
-    x0=None,
+    b: ArrayLike,
+    x0: Optional[ArrayLike] = None,
     tol: float = 1e-05,
     restart: Optional[int] = None,
     maxiter: Optional[int] = None,
     M=None,
     callback: Optional[Callable] = None,
     atol: Optional[float] = 0.0,
-    exact_solution=None,
+    exact_solution: Optional[ArrayLike] = None,
 ):
     if x0 is None:
         x0 = np.zeros(A.shape[1])
+    else:
+        x0 = np.asarray(x0)
 
     assert_shapes(A, b, x0)
 
@@ -169,8 +174,8 @@ def gmres(
 # <https://github.com/scipy/scipy/issues/13935>
 def minres(
     A,
-    b,
-    x0=None,
+    b: ArrayLike,
+    x0: Optional[ArrayLike] = None,
     shift: float = 0.0,
     tol: float = 1e-05,
     maxiter: Optional[int] = None,
@@ -180,6 +185,8 @@ def minres(
 ):
     if x0 is None:
         x0 = np.zeros(A.shape[1])
+    else:
+        x0 = np.asarray(x0)
 
     assert_shapes(A, b, x0)
 
@@ -225,15 +232,15 @@ def minres(
 # right)
 def qmr(
     A,
-    b,
-    x0=None,
+    b: ArrayLike,
+    x0: Optional[ArrayLike] = None,
     tol: float = 1e-05,
     maxiter: Optional[int] = None,
     M1=None,
     M2=None,
     callback: Optional[Callable] = None,
     atol: Optional[float] = 0.0,
-    exact_solution=None,
+    exact_solution: Optional[ArrayLike] = None,
 ):
     if x0 is None:
         x0 = np.zeros(A.shape[1])

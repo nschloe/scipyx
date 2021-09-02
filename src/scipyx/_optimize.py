@@ -2,9 +2,10 @@ from typing import Callable
 
 import numpy as np
 import scipy.optimize
+from numpy.typing import ArrayLike
 
 
-def minimize(fun: Callable, x0, *args, **kwargs):
+def minimize(fun: Callable, x0: ArrayLike, *args, **kwargs) -> np.ndarray:
     x0 = np.asarray(x0)
     x0_shape = x0.shape
 
@@ -24,7 +25,7 @@ def minimize(fun: Callable, x0, *args, **kwargs):
     return out
 
 
-def leastsq(fun: Callable, x0, *args, **kwargs):
+def leastsq(fun: Callable, x0: ArrayLike, *args, **kwargs):
     x0 = np.asarray(x0)
     x0_shape = x0.shape
 
