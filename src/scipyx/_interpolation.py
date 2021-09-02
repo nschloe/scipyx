@@ -3,7 +3,7 @@ from numpy.typing import ArrayLike
 from scipy.interpolate import PPoly, lagrange
 
 
-def interp_rolling_lagrange(x: ArrayLike, y: ArrayLike, order: int):
+def interp_rolling_lagrange(x: ArrayLike, y: ArrayLike, order: int) -> PPoly:
     x = np.asarray(x)
     y = np.asarray(y)
 
