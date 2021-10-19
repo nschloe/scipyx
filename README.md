@@ -142,6 +142,7 @@ sn, cn, dn, ph = spx.ellipj(u, m)
 ```
 
 Relevant bug reports:
+
 - [Jacobian elliptic function with complex argument
   #12226](https://github.com/scipy/scipy/issues/12226)
 
