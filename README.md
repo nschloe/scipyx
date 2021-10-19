@@ -124,13 +124,26 @@ coordinates x/y are considered for each interval.
 | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
 |                                Order 0                                 |                                Order 1                                 |                                Order 2                                 |
 
-#### Jacobi elliptic funtions with complex argument
+#### Jacobi elliptic functions with complex argument
+
+SciPy supports
+[Jacobi elliptic functions](https://en.wikipedia.org/wiki/Jacobi_elliptic_functions) as
+[ellipj](https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.ellipj.html).
+Unfortunately, only real-valued argument `u` and parameter `m` are allowed. scipyx
+expands support to complex-valued argument `u`.
 
 ```python
 import scipyx as spx
 
-sn, cn, dn = sp.ellipj(x, m)
+u = 1.0 + 2.0j
+m = 0.8
+# sn, cn, dn, ph = scipy.special.ellipj(x, m)  # not working
+sn, cn, dn, ph = spx.ellipj(u, m)
 ```
+
+Relevant bug reports:
+- [Jacobian elliptic function with complex argument
+  #12226](https://github.com/scipy/scipy/issues/12226)
 
 ### License
 
