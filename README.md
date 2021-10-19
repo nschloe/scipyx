@@ -124,6 +124,14 @@ coordinates x/y are considered for each interval.
 | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
 |                                Order 0                                 |                                Order 1                                 |                                Order 2                                 |
 
+#### Jacobi elliptic funtions with complex argument
+
+```python
+import scipyx as spx
+
+sn, cn, dn = sp.ellipj(x, m)
+```
+
 ### License
 
 This software is published under the [BSD-3-Clause
