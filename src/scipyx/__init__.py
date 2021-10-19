@@ -1,3 +1,4 @@
+from ._ellip import ellipj
 from ._interpolation import interp_rolling_lagrange
 from ._krylov import bicg, bicgstab, cg, cgs, gmres, minres, qmr
 from ._nonlinear import bisect, regula_falsi
@@ -19,4 +20,6 @@ __all__ = [
     "regula_falsi",
     #
     "interp_rolling_lagrange",
+    #
+    "ellipj",
 ]
