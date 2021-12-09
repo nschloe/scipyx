@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections import namedtuple
-from typing import Callable, Optional
+from typing import Callable
 
 import numpy as np
 import scipy
@@ -41,13 +43,13 @@ def _wrapper(
     method: Callable,
     A,
     b: ArrayLike,
-    x0: Optional[ArrayLike] = None,
+    x0: ArrayLike | None = None,
     tol: float = 1e-05,
-    maxiter: Optional[int] = None,
+    maxiter: int | None = None,
     M=None,
-    callback: Optional[Callable] = None,
-    atol: Optional[float] = 0.0,
-    exact_solution: Optional[ArrayLike] = None,
+    callback: Callable | None = None,
+    atol: float | None = 0.0,
+    exact_solution: ArrayLike | None = None,
 ):
     if x0 is None:
         x0 = np.zeros_like(b)
@@ -110,14 +112,14 @@ def cgs(*args, **kwargs):
 def gmres(
     A,
     b: ArrayLike,
-    x0: Optional[ArrayLike] = None,
+    x0: ArrayLike | None = None,
     tol: float = 1e-05,
-    restart: Optional[int] = None,
-    maxiter: Optional[int] = None,
+    restart: int | None = None,
+    maxiter: int | None = None,
     M=None,
-    callback: Optional[Callable] = None,
-    atol: Optional[float] = 0.0,
-    exact_solution: Optional[ArrayLike] = None,
+    callback: Callable | None = None,
+    atol: float | None = 0.0,
+    exact_solution: ArrayLike | None = None,
 ):
     if x0 is None:
         x0 = np.zeros(A.shape[1])
@@ -175,12 +177,12 @@ def gmres(
 def minres(
     A,
     b: ArrayLike,
-    x0: Optional[ArrayLike] = None,
+    x0: ArrayLike | None = None,
     shift: float = 0.0,
     tol: float = 1e-05,
-    maxiter: Optional[int] = None,
+    maxiter: int | None = None,
     M=None,
-    callback: Optional[Callable] = None,
+    callback: Callable | None = None,
     exact_solution=None,
 ):
     if x0 is None:
@@ -233,14 +235,14 @@ def minres(
 def qmr(
     A,
     b: ArrayLike,
-    x0: Optional[ArrayLike] = None,
+    x0: ArrayLike | None = None,
     tol: float = 1e-05,
-    maxiter: Optional[int] = None,
+    maxiter: int | None = None,
     M1=None,
     M2=None,
-    callback: Optional[Callable] = None,
-    atol: Optional[float] = 0.0,
-    exact_solution: Optional[ArrayLike] = None,
+    callback: Callable | None = None,
+    atol: float | None = 0.0,
+    exact_solution: ArrayLike | None = None,
 ):
     if x0 is None:
         x0 = np.zeros(A.shape[1])
