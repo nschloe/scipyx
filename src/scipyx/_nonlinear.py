@@ -1,6 +1,9 @@
-from typing import Callable, Optional
+from __future__ import annotations
+
+from typing import Callable
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 
 def _dot_last(a, b):
@@ -12,7 +15,13 @@ def _dot_last(a, b):
     return out
 
 
-def bisect(f: Callable, a, b, tol: float, max_num_steps: Optional[int] = None):
+def bisect(
+    f: Callable[[np.ndarray], np.ndarray],
+    a: ArrayLike,
+    b: ArrayLike,
+    tol: float,
+    max_num_steps: int | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
     a = np.asarray(a)
     b = np.asarray(b)
 
@@ -53,7 +62,13 @@ def bisect(f: Callable, a, b, tol: float, max_num_steps: Optional[int] = None):
     return a, b
 
 
-def regula_falsi(f: Callable, a, b, tol: float, max_num_steps: Optional[int] = None):
+def regula_falsi(
+    f: Callable[[np.ndarray], np.ndarray],
+    a: ArrayLike,
+    b: ArrayLike,
+    tol: float,
+    max_num_steps: int | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
     a = np.asarray(a)
     b = np.asarray(b)
     fa = np.asarray(f(a))
