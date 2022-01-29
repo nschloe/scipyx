@@ -1,3 +1,4 @@
+from .__about__ import __version__
 from ._ellip import ellipj
 from ._interpolation import interp_rolling_lagrange
 from ._krylov import bicg, bicgstab, cg, cgs, gmres, minres, qmr
@@ -18,4 +19,6 @@ __all__ = [
     "interp_rolling_lagrange",
     #
     "ellipj",
+    #
+    "__version__",
 ]
